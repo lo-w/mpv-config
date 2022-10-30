@@ -12,12 +12,6 @@ from vapoursynth import core
 core.num_threads = 8
 core.max_cache_size = 8192
 
-clip = video_in
-
-# source & display video fps
-svf = container_fps or 23.976
-dpf = display_fps   or 59.970
-
 def getMWH(pf):
     if "Windows" in pf:
         import ctypes
@@ -35,22 +29,18 @@ def getMWH(pf):
             return 1920, 1080
     return check_output(command, shell=True, encoding="utf-8").strip().split("x")
 
-if dpf - svf > 10:
-    abs = True
-    target_fps = 60
+clip = video_in
 
-    # video width & height
-    vw, vh = video_in_dw, video_in_dh
-    # screen/monitor width & height
-    mw, mh = getMWH(platform.system())
+# source & display video fps
+svf = container_fps or 23.976
+dpf = display_fps   or 59.970
 
-    num = round(min(max(target_fps, svf * 2, dpf / 2), dpf)) * 1000 if abs else 2000
-    den = 1000
+# screen/monitor width & height
+mw, mh = getMWH(platform.system())
+# video width & height
+vw, vh = video_in_dw, video_in_dh
 
-    sp = "{pel:2,gpu:1,scale:{up:2,down:4}}"
-    ap = "{gpu:1}"
-    fp = "{rate:{num:%s,den:%s,abs:%s},algo:23}" % (num, den, str(abs).lower())
-
+if dpf - svf > 10 and vw < 3000:
     ### fit the video size, video resolution multiple screen/monitor resolution
     r = max(vw/mw, vh/mh)
     if r > 1:
@@ -61,14 +51,24 @@ if dpf - svf > 10:
     if clip.format.id==vs.YUV420P8:
         clip8 = clip
     elif clip.format.id==vs.YUV420P10:
-        # clip8 = clip.resize.Bilinear(format=vs.YUV420P8)
-        clip8 = core.fmtc.bitdepth(clip, bits=8,dmode=0)
+        clip8 = clip.resize.Bilinear(format=vs.YUV420P8)
+        # clip8 = core.fmtc.bitdepth(clip, bits=8,dmode=0)
     else:
-        # clip = clip.resize.Bilinear(format=vs.YUV420P10, dither_type="random")
-        # clip8 = clip.resize.Bilinear(format=vs.YUV420P8)
-        clip8 = core.fmtc.bitdepth(clip, bits=16,dmode=0)
-        clip8 = core.fmtc.resample(clip8, css="420",kernel="spline36",interlaced=0, interlacedd=0)
-        clip8 = core.fmtc.bitdepth(clip8, bits=8,dmode=0)
+        clip = clip.resize.Bilinear(format=vs.YUV420P10, dither_type="random")
+        clip8 = clip.resize.Bilinear(format=vs.YUV420P8)
+        # clip8 = core.fmtc.bitdepth(clip, bits=16,dmode=0)
+        # clip8 = core.fmtc.resample(clip8, css="420",kernel="spline36",interlaced=0, interlacedd=0)
+        # clip8 = core.fmtc.bitdepth(clip8, bits=8,dmode=0)
+
+    abs = True
+    target_fps = 60
+
+    num = round(min(max(target_fps, svf * 2, dpf / 2), dpf)) * 1000 if abs else 2000
+    den = 1000
+
+    sp = "{pel:2,gpu:1,scale:{up:2,down:4}}"
+    ap = "{gpu:1}"
+    fp = "{rate:{num:%s,den:%s,abs:%s},algo:23}" % (num, den, str(abs).lower())
 
     ### svpflow read & add frame
     svps = core.svp1.Super(clip8, sp)

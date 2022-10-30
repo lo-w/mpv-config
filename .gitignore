@@ -1,0 +1,10 @@
+mpv*
+installer/*
+doc/*
+updater.bat
+*.dll
+portable_config/watch_later/*
+portable_config/shaders/*
+portable_config/fonts/*
+portable_config/script-opts/*
+portable_config/scripts/*
