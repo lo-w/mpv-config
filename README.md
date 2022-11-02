@@ -1,10 +1,10 @@
 # mpv-config
 
-this is self used mpv config  
+This is self used mpv config, feel free to refer any 3pp links  
+
 mpv  
 https://github.com/mpv-player/mpv  
 mpv-x86_64-v3 portable  
-https://github.com/mpv-player/mpv/wiki/User-Scripts  
 
 python  
 https://www.python.org/  
@@ -28,3 +28,7 @@ unzip to mpv ~~/shaders
 yt-dlp  
 https://github.com/yt-dlp/yt-dlp  
 unzip to python dir  
+
+User-Scripts  
+https://github.com/mpv-player/mpv/wiki/User-Scripts  
+https://github.com/Eisa01/mpv-scripts  
