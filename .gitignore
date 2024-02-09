@@ -8,3 +8,4 @@ portable_config/shaders/*
 portable_config/fonts/*
 portable_config/script-opts/*
 portable_config/scripts/*
+portable_config/cache/*
